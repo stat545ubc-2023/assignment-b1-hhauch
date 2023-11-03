@@ -1,0 +1,153 @@
+Assignment B-1
+================
+Hannah Hauch
+
+``` r
+library(datateachr) 
+library(tidyverse) 
+```
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.1.3     ✔ readr     2.1.4
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+    ## ✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+    ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+    ## ✔ purrr     1.0.2     
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
+library(roxygen2)
+library(palmerpenguins)
+library(testthat)
+```
+
+    ## 
+    ## Attaching package: 'testthat'
+    ## 
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     matches
+    ## 
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     is_null
+    ## 
+    ## The following objects are masked from 'package:readr':
+    ## 
+    ##     edition_get, local_edition
+    ## 
+    ## The following object is masked from 'package:tidyr':
+    ## 
+    ##     matches
+
+\###Exercise 1 & 2: Make and Document a Function
+
+``` r
+#' @title Create Summary Table from Data Set
+#' 
+#' @description Creates a summary table for a chosen variable with mean, median, max, min, interquartile range (IQR), and standard deviation grouped by another variable in the data set
+#' 
+#' @param df: Data frame of choice, Named df as this is an abbreviation of Data Frame
+#' @param group_cat: The variable that the summarize function will be grouped by. Named group_cat as this categorical variable will be used in the group_by function. 
+#' @param Summary_num: the numerical variable that the summary will be made for. Named summary_num as this is the numerical variable that will be used in the summarize function
+#' @param na.rm = True: To drop the missing values from the calculation, it is not hard coded so the user can decided. 
+#' @param ... allows for extra augments to be added to augment the functions inside such as mean or median. 
+#' @return the function returns a summary table tibble that includes:
+#' \itemize {
+#' \item group_cat: the categorical variable
+#' \item mean: average value per group(s)
+#' \item median: median value per group(s)
+#' \item max: maximum value per group(s)
+#' \item min: minimum value per group(s)
+#' \item IQR: interquartile range of the group(s)
+#' \item sd: standard deviation for the group(s)}
+
+summary_table <- function(df, group_cat, summary_num, na.rm = TRUE, ...) {
+  stopifnot(is.data.frame(df))
+  df %>%
+  group_by({{group_cat}}) %>%
+  summarize(mean = mean({{summary_num}}, na.rm = na.rm),
+  median = median({{summary_num}}, na.rm = na.rm),
+  max = max({{summary_num}}, na.rm = na.rm),
+  min = min({{summary_num}}, na.rm = na.rm),
+  IQR = IQR({{summary_num}}, na.rm = na.rm),
+  sd = sd({{summary_num}}, na.rm = na.rm))
+
+}
+```
+
+### Exercise 3: Examples with Function
+
+#### Testing with cancer_sample data set
+
+I applied the function to make a summary table on the cancer_sample data
+set where the categorical variable is the diagnosis and the numerical
+variable is the texture_mean. I expected that I would get a table that
+showed the mean, median, max, min, IQR, and sd for texture_mean from
+benign and metastatic cells.
+
+``` r
+summarize_texture_table <- summary_table(cancer_sample, diagnosis, texture_mean)
+
+print(summarize_texture_table)
+```
+
+    ## # A tibble: 2 × 7
+    ##   diagnosis  mean median   max   min   IQR    sd
+    ##   <chr>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl>
+    ## 1 B          17.9   17.4  33.8  9.71  4.61  4.00
+    ## 2 M          21.6   21.5  39.3 10.4   4.44  3.78
+
+#### Testing with penguins data set
+
+I applied the function to make a summary table on the penguins data set
+where the categorical variable is the island and the numerical variable
+is the bill length in mm. I expected that I would get a table that
+showed the mean, median, max, min, IQR, and sd for bill length for
+penguins on the Biscoe, Dream, and Torgersen islands respectively.
+
+``` r
+summarize_bill_length_island <- summary_table(penguins, island, bill_length_mm)
+
+print(summarize_bill_length_island)
+```
+
+    ## # A tibble: 3 × 7
+    ##   island     mean median   max   min   IQR    sd
+    ##   <fct>     <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl>
+    ## 1 Biscoe     45.3   45.8  59.6  34.5  6.7   4.77
+    ## 2 Dream      44.2   44.7  58    32.1 10.7   5.95
+    ## 3 Torgersen  39.0   38.9  46    33.5  4.45  3.03
+
+### Exercise 4: Test the Function
+
+``` r
+test_that("Invalid Aruguments", { #this test_that checks to make sure there are not invalid inputs
+  expect_error(summary_table("cancer_sample", diagnosis, texture_mean)) #this checks that one of the inputs isn't a string
+  expect_error(summary_table(5,12,3)) #this checks against just numerical input
+  expect_error(summary_table(cancer_sample, texture_mean, diagnosis)) #this checks against switching the numerical variable and the categorical variable 
+})
+```
+
+    ## Test passed 🌈
+
+``` r
+test_that('NA handling works', { #this test checks that the NA handling works 
+  expect_error(summary_table(summary_table(penguins, island, body_mass_g, na.rm = FALSE))) #If na.rm=FALSE we would expect an error, however it is up to the user to decided if it is TRUE or FALSE
+  expect_no_error(summary_table(penguins, island, body_mass_g, na.rm = TRUE)) #no error is expected when na.rm = TRUE
+               })
+```
+
+    ## Test passed 🎉
+
+``` r
+test_that('Output is correct type', {
+expect_type(summary_table(penguins, island, body_mass_g), "list")
+expect_named(summary_table(penguins, island, body_mass_g), c("island", "mean", "median", "max", "min", "IQR", "sd"))
+})
+```
+
+    ## Test passed 🌈
