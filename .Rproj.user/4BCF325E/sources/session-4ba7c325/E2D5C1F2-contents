@@ -126,13 +126,13 @@ print(summarize_bill_length_island)
 
 ``` r
 test_that("Invalid Aruguments", { #this test_that checks to make sure there are not invalid inputs
-  expect_error(summary_table("cancer_sample", diagnosis, texture_mean)) #this checks if one of the inputs is a string and not a variable then gives an error 
+  expect_error(summary_table("cancer_sample", diagnosis, texture_mean)) #this checks that one of the inputs isn't a string
   expect_error(summary_table(5,12,3)) #this checks against just numerical input
   expect_error(summary_table(cancer_sample, texture_mean, diagnosis)) #this checks against switching the numerical variable and the categorical variable 
 })
 ```
 
-    ## Test passed 🎊
+    ## Test passed 🌈
 
 ``` r
 test_that('NA handling works', { #this test checks that the NA handling works 
@@ -141,13 +141,13 @@ test_that('NA handling works', { #this test checks that the NA handling works
                })
 ```
 
-    ## Test passed 😸
+    ## Test passed 🎉
 
 ``` r
-test_that('Output is correct', { #to check is the output is as expected 
-expect_type(summary_table(penguins, island, body_mass_g), "list") #checks that the output is a list
-expect_named(summary_table(penguins, island, body_mass_g), c("island", "mean", "median", "max", "min", "IQR", "sd")) #checks that names of the columns are identical to the expected
+test_that('Output is correct type', {
+expect_type(summary_table(penguins, island, body_mass_g), "list")
+expect_named(summary_table(penguins, island, body_mass_g), c("island", "mean", "median", "max", "min", "IQR", "sd"))
 })
 ```
 
-    ## Test passed 😸
+    ## Test passed 🌈

@@ -1,0 +1,3 @@
+"0","summarize_texture_table <- summary_table(cancer_sample, diagnosis, texture_mean)"
+"0",""
+"0","print(summarize_texture_table)"
