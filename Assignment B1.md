@@ -132,7 +132,7 @@ test_that("Invalid Aruguments", { #this test_that checks to make sure there are 
 })
 ```
 
-    ## Test passed 🎊
+    ## Test passed 😀
 
 ``` r
 test_that('NA handling works', { #this test checks that the NA handling works 
@@ -141,7 +141,7 @@ test_that('NA handling works', { #this test checks that the NA handling works
                })
 ```
 
-    ## Test passed 😸
+    ## Test passed 🥇
 
 ``` r
 test_that('Output is correct', { #to check is the output is as expected 
@@ -150,4 +150,4 @@ expect_named(summary_table(penguins, island, body_mass_g), c("island", "mean", "
 })
 ```
 
-    ## Test passed 😸
+    ## Test passed 🎉
